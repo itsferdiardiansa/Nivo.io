@@ -1,0 +1,19 @@
+{
+  "name": "nivo.io",
+  "version": "0.0.0",
+  "license": "MIT",
+  "private": true,
+  "author": {
+    "email": "ferdiardiansa@gmail.com",
+    "name": "ferdiardiansa"
+  },
+  "scripts": {
+    "preinstall": "npx only-allow pnpm"
+  },
+  "dependencies": {},
+  "devDependencies": {},
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ]
+}
