@@ -1,0 +1,47 @@
+name: Deploy
+run-name: 'deploy: ${{ github.sha }}'
+on:
+  workflow_dispatch:
+    inputs:
+      main_api:
+        type: boolean
+        required: true
+        default: false
+        description: Main GraphQL
+      main_web:
+        type: boolean
+        required: true
+        default: false
+        description: Main web
+      environment:
+        type: choice
+        description: Which server environment would you like to deploy?
+        options:
+          - staging
+          - production
+jobs:
+  deploy-landing-web:
+    if: inputs.main_web == true && (github.ref == 'refs/heads/staging' || github.ref == 'refs/heads/main')
+    uses: ./.github/workflows/wc-deploy-schema.yaml
+    with:
+      artifact_name: personal-web-artifact
+      environment: ${{ inputs.environment }}
+    secrets:
+      org_id: ${{ secrets.VERCEL_ORG_ID }}
+      project_id: ${{ secrets.VERCEL_WEB_LANDING_ID }}
+      token: ${{ secrets.VERCEL_TOKEN }}
+
+  deploy-landing-api:
+    if: inputs.main_api == true && (github.ref == 'refs/heads/staging' || github.ref == 'refs/heads/main')
+    uses: ./.github/workflows/wc-deploy-schema.yaml
+    with:
+      artifact_name: landing-api-artifact
+      environment: ${{ inputs.environment }}
+      pre_built: true
+      pre_built_cmd: |
+        pnpm i
+        npx nx build @oxcyn-apps/landing-api
+    secrets:
+      org_id: ${{ secrets.VERCEL_ORG_ID }}
+      project_id: ${{ secrets.VERCEL_API_LANDING_ID }}
+      token: ${{ secrets.VERCEL_TOKEN }}
